@@ -54,7 +54,9 @@ Embark on a programming journey through the mythical land of Pythoria, where cod
 - **`LICENSE`**: Licensing details for the repository.
 
 ## How to Use
-1. **Environment Setup**: Install the required libraries by running `pip install -r requirements.txt`.
+1. **Environment Setup**:
+  Install Miniconda or any env of your choice. Make sure the python version >3.10.x
+ Install the required libraries by running `pip install -r requirements.txt`.
 2. **Running Scripts**: The Scripts can be run from the HOMEDIR as we have made the script to run as module. 
 ```bash
 # Running the Script 
