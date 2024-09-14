@@ -56,7 +56,12 @@ Embark on a programming journey through the mythical land of Pythoria, where cod
 ## How to Use
 1. **Environment Setup**:
   Install Miniconda or any env of your choice. Make sure the python version >3.10.x
- Install the required libraries by running `pip install -r requirements.txt`.
+  ```bash
+  conda create -n <your_env> python=3.10.12 -y 
+  conda activate <your_env>
+  ```
+  Install the required libraries by running `pip install -r requirements.txt`.
+  
 2. **Running Scripts**: The Scripts can be run from the HOMEDIR as we have made the script to run as module. 
 ```bash
 # Running the Script 
