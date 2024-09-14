@@ -55,7 +55,11 @@ Embark on a programming journey through the mythical land of Pythoria, where cod
 
 ## How to Use
 1. **Environment Setup**: Install the required libraries by running `pip install -r requirements.txt`.
-2. **Running Scripts**: Navigate to the `scripts/` folder and execute the scripts sequentially.
+2. **Running Scripts**: The Scripts can be run from the HOMEDIR as we have made the script to run as module. 
+```bash
+# Running the Script 
+python -m  scripts.question2.chapter1
+```
 3. **View Outputs**: All results are saved in the `output/` folder for review.
 
 ## Contribution Log
