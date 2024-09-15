@@ -62,12 +62,39 @@ Embark on a programming journey through the mythical land of Pythoria, where cod
   ```
   Install the required libraries by running `pip install -r requirements.txt`.
   
+  Download Models of the Spacy 
+  ```bash 
+  python -m spacy download en_core_web_sm 
+  ```
+
+  Installing pytorch , for GPU make sure the cuda version matches the one on your system 
+  ```bash 
+  # For CPU 
+  conda install pytorch torchvision torchaudio cpuonly -c pytorch
+
+  # For GPU 
+  conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+
+
+  ```
+
+  
+  
 2. **Running Scripts**: The Scripts can be run from the HOMEDIR as we have made the script to run as module. 
 ```bash
 # Running the Script 
 python -m  scripts.question2.chapter1
 ```
 3. **View Outputs**: All results are saved in the `output/` folder for review.
+
+
+## Issues and Solutions 
+Sometimes the setup.py gives us the build issues, if you are using linux make sure to install build-essentials which can be installed by 
+```bash 
+sudo apt-get update
+sudo apt-get install build-essential
+
+```
 
 ## Contribution Log
 The repository reflects the collaborative work of all four team members, with GitHub commit logs ensuring transparency and tracking individual contributions.
