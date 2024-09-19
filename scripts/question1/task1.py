@@ -1,43 +1,25 @@
-import os
+import pandas as pd
 
-def merge_csv_files(input_dir, output_file):
-    """
-    Merges all CSV files from the specified input directory into a single output file.
-    
-    Args:
-        input_dir (str): Directory containing the CSV files.
-        output_file (str): Path to the final merged CSV file.
-    """
-    try:
-        # Ensure the input directory exists
-        if not os.path.exists(input_dir):
-            raise FileNotFoundError(f"The directory {input_dir} does not exist.")
-        
-        # List all CSV files in the input directory
-        csv_files = [f for f in os.listdir(input_dir) if f.endswith('.csv')]
+# A list of the text columns of each CSV file name
+csv_files = [('CSV1.csv', 'SHORT-TEXT'), ('CSV2.csv', 'TEXT'), ('CSV3.csv','TEXT'), ('CSV4.csv','TEXT')]
 
-        if not csv_files:
-            raise FileNotFoundError("No CSV files found in the specified directory.")
+# List to hold text data from every file
+all_texts1 = []
 
-        # Open the output file in write mode
-        with open(output_file, 'w') as resultfile_fp:
-            # Iterate through each CSV file
-            for file_name in csv_files:
-                full_file_path = os.path.join(input_dir, file_name)
-                
-                # Open each CSV file in read mode
-                with open(full_file_path, 'r') as csvfile_fp:
-                    # Read the content and write to the result file
-                    resultfile_fp.write(csvfile_fp.read())
-                    resultfile_fp.write('\n')  # Add a newline between files
+# Examine every CSV file to extract text data.
+for (file1, text_column1) in csv_files:
+    # A CSV file is read into a DataFrame.
+    df = pd.read_csv(file1)
 
-        print(f"Successfully merged {len(csv_files)} files into {output_file}")
-    
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    # Considering that the column with text data is called "text"
+    if text_column1 in df.columns:
+        # Take text data and add it to the list.
+        all_texts1.extend(df[text_column1].astype(str).tolist())
 
-# Example usage
-if __name__ == "__main__":
-    input_directory = "data"
-    output_file = "output/final_csv.txt"
-    merge_csv_files(input_directory, output_file)
+# Adding textual data to a fresh text document.
+output_file = 'all_csv_file.txt'
+with open(output_file, 'w', encoding='utf-8') as f:
+    for text in all_texts1:
+        f.write(text + '\n')
+
+print(f'Text information written to {output_file}')
