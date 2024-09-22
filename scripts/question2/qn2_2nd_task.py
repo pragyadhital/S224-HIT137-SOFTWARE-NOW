@@ -1,11 +1,3 @@
-
-"""
-GitHub Repository
-
-https://github.com/veddahit/Soft_assignment/blob/main/qn2_2nd_task.py
-
-"""
-
 ## string separation
 
 def separate_and_convert(s):
