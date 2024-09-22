@@ -1,118 +1,75 @@
 import spacy
-from concurrent.futures import ThreadPoolExecutor
-from transformers import BertTokenizer, BertForTokenClassification
+from spacy import displacy
+from spacy.tokens import DocBin
+from transformers import AutoTokenizer, AutoModelForTokenClassification
 import torch
 from collections import Counter
 
-# Load SpaCy model for scientific texts
-nlp_spacy = spacy.load("en_core_sci_sm")
+def ner_spacy(text, model_name):
+    nlp = spacy.load(model_name)
+    doc = nlp(text)
+    return doc
 
-# Load BioBERT model and tokenizer
-tokenizer_biobert = BertTokenizer.from_pretrained('monologg/biobert_v1.1_pubmed', do_lower_case=False)
-model_biobert = BertForTokenClassification.from_pretrained('monologg/biobert_v1.1_pubmed')
-
-# Disable unneeded pipelines for efficiency
-nlp_spacy.disable_pipes('parser', 'ner')
-
-# Function to process a batch of text with SpaCy
-def process_spacy_batch(chunk):
-    docs = nlp_spacy.pipe(chunk, disable=["parser", "ner"])
-    
-    # Extract disease and drug entities
-    diseases = []
-    drugs = []
-
-    for doc in docs:
-        diseases.extend([ent.text for ent in doc.ents if ent.label_ == "DISEASE"])
-        drugs.extend([ent.text for ent in doc.ents if ent.label_ == "CHEMICAL"])
-
-    return diseases, drugs
-
-# Function to process large text files in batches
-def process_large_text_file(file_path, chunk_size=10 * 1024 * 1024, batch_size=10):
-    with open(file_path, "r", encoding="utf-8") as file:
-        # Read the file in chunks
-        chunks = []
-        while True:
-            chunk = file.read(chunk_size)
-            if not chunk:
-                break  # End of file
-            chunks.append(chunk)
-            if len(chunks) == batch_size:
-                yield chunks
-                chunks = []
-
-        # Yield the remaining chunks
-        if chunks:
-            yield chunks
-
-# Process batches of text concurrently
-def process_batches(batches):
-    with ThreadPoolExecutor() as executor:
-        results = list(executor.map(process_spacy_batch, batches))
-
-    # Aggregate results
-    all_diseases = [disease for result in results for disease in result[0]]
-    all_drugs = [drug for result in results for drug in result[1]]
-
-    # Print the extracted diseases and drugs
-    print("SpaCy Diseases:", Counter(all_diseases))
-    print("SpaCy Drugs:", Counter(all_drugs))
-
-    return all_diseases, all_drugs
-
-# Extract entities using BioBERT
-def extract_entities_biobert(text):
-    inputs = tokenizer_biobert(text, return_tensors="pt", truncation=True)
-    outputs = model_biobert(**inputs)
+def ner_biobert(text, tokenizer, model):
+    inputs = tokenizer(text, return_tensors="pt")
+    outputs = model(**inputs)
     predictions = torch.argmax(outputs.logits, dim=2)
+    
+    
+    tokens = tokenizer.convert_ids_to_tokens(predictions[0].tolist())
+    
+    return tokens
 
-    # Map token predictions to entities
-    entities = []
-    for token, prediction in zip(inputs["input_ids"][0], predictions[0]):
-        token_str = tokenizer_biobert.convert_ids_to_tokens(token.item())
-        label = 'DISEASE' if torch.eq(prediction, torch.tensor(1)) else 'DRUG' if torch.eq(prediction, torch.tensor(0)) else 'O'
-        
-        if label != 'O':
-            entities.append((token_str, label))
+def compare_ner_results(text, spacy_model_name, biobert_model_name):
+    
+    spacy_doc = ner_spacy(text, spacy_model_name)
 
-    return entities
+    
+    tokenizer_biobert = AutoTokenizer.from_pretrained(biobert_model_name)
+    model_biobert = AutoModelForTokenClassification.from_pretrained(biobert_model_name)
 
-# Process the text file
-file_path = './output/final_csv.txt'  # Update with your file path
-chunk_size = 100000  # Adjust as needed
-batch_size = 10
-batches = process_large_text_file(file_path, chunk_size=chunk_size, batch_size=batch_size)
+    
+    tokens_biobert = ner_biobert(text, tokenizer_biobert, model_biobert)
 
-# Process batches with SpaCy
-spacy_diseases, spacy_drugs = process_batches(batches)
+    
+    entities_spacy = [ent.text for ent in spacy_doc.ents]
 
-# Read the whole text for BioBERT processing
+    
+    entities_biobert = [token for token in tokens_biobert if token.startswith("B-")]
+
+    
+    common_entities = set(entities_spacy) & set(entities_biobert)
+    unique_entities_spacy = set(entities_spacy) - set(entities_biobert)
+    unique_entities_biobert = set(entities_biobert) - set(entities_spacy)
+
+    
+    print(f"Total entities detected by spaCy: {len(entities_spacy)}")
+    print(f"Total entities detected by BioBERT: {len(entities_biobert)}")
+    print(f"Common entities: {len(common_entities)}")
+    print(f"Entities unique to spaCy: {len(unique_entities_spacy)}")
+    print(f"Entities unique to BioBERT: {len(unique_entities_biobert)}")
+
+    
+    print("\nMost common words for spaCy:")
+    counter_spacy = Counter(entities_spacy)
+    for word, count in counter_spacy.most_common(10):
+        print(f"{word}: {count}")
+
+    
+    print("\nMost common words for BioBERT:")
+    counter_biobert = Counter(entities_biobert)
+    for word, count in counter_biobert.most_common(10):
+        print(f"{word}: {count}")
+
+    
+    displacy.serve(spacy_doc, style="ent")
+
+
+file_path = r'F:\CDU\HIT137 SOFTWARE NOW\HIT137_Software Now_Assignment 2\outputs\output1.txt' 
+
 with open(file_path, 'r', encoding='utf-8') as file:
     text = file.read()
-    biobert_entities = extract_entities_biobert(text)
 
-# Separate BioBERT entities
-biobert_diseases = [entity[0] for entity in biobert_entities if entity[1] == 'DISEASE']
-biobert_drugs = [entity[0] for entity in biobert_entities if entity[1] == 'DRUG']
-
-# Print the results from BioBERT
-print("BioBERT Diseases:", Counter(biobert_diseases))
-print("BioBERT Drugs:", Counter(biobert_drugs))
-
-# Compare entities from both methods
-common_diseases = set(spacy_diseases).intersection(biobert_diseases)
-unique_spacy_diseases = set(spacy_diseases).difference(biobert_diseases)
-unique_biobert_diseases = set(biobert_diseases).difference(spacy_diseases)
-
-common_drugs = set(spacy_drugs).intersection(biobert_drugs)
-unique_spacy_drugs = set(spacy_drugs).difference(biobert_drugs)
-unique_biobert_drugs = set(biobert_drugs).difference(spacy_drugs)
-
-print("\nCommon Diseases between SpaCy and BioBERT:", common_diseases)
-print("Unique to SpaCy Diseases:", unique_spacy_diseases)
-print("Unique to BioBERT Diseases:", unique_biobert_diseases)
-
-print("\nCommon Drugs between SpaCy and BioBERT:", common_drugs)
-print("Unique to SpaCy Drugs:", unique_spacy_drugs)
-print("Unique to BioBERT Drugs:", unique_biobert_drugs)
+spacy_model_name = 'en_core_sci_sm'  
+biobert_model_name = 'dmis-lab/biobert-base-cased-v1.1'  
+compare_ner_results(text, spacy_model_name, biobert_model_name)
