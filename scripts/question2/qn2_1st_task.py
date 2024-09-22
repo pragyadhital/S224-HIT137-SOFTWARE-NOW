@@ -1,11 +1,4 @@
 
-"""
-GitHub Repository
-
-https://github.com/veddahit/Soft_assignment/blob/main/qn2_1st_task.py
-
-"""
-
 import time
 
 current_time = int(time.time())
