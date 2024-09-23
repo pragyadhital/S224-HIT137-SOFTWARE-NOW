@@ -1,75 +1,62 @@
-
-def encrypt(text, key):
-
-    # Normalize the key 
-    key = key % 26
-
-    encrypted_text = ""
-    for char in text:
-        if char.isalpha():
-            shifted = ord(char) + key
-            if char.islower():
-                if shifted > ord('z'):
-                    shifted -= 26
-                elif shifted < ord('a'):
-                    shifted += 26
-            elif char.isupper():
-                if shifted > ord('Z'):
-                    shifted -= 26
-                elif shifted < ord('A'):
-                    shifted += 26
-            encrypted_text += chr(shifted)
-        else:
-            encrypted_text += char
-    return encrypted_text
-    
-# Using decrypt function to find the encrypted key 
-
-def decrypt(encrypted_text, key):  
-    key = key%26
+def decrypt(text, key):
     decrypted_text = ""
-    for char in encrypted_text:
-        if char.isalpha():
+    for char in text:
+        if char.isalpha():  # Check if the character is a letter
             shifted = ord(char) - key
             if char.islower():
-                if shifted > ord('z'):
-                    shifted -= 26
-                elif shifted < ord('a'):
+                if shifted < ord('a'):
                     shifted += 26
             elif char.isupper():
-                if shifted > ord('Z'):
-                    shifted -= 26
-                elif shifted < ord('A'):
+                if shifted < ord('A'):
                     shifted += 26
             decrypted_text += chr(shifted)
         else:
-            decrypted_text += char
+            decrypted_text += char  # Non-alphabet characters remain unchanged
     return decrypted_text
 
-# Example usage:
-encryted_text = """VZ FRYSVFU VZCNGVRAG NAQ N YVGGYR VAFRPHER V ZNXR ZVFGNXRF V NZ BHG BS PBAGEBY
-NAQNG GVZRF UNEQ GB UNAQYR OHG VS LBH PNAG UNAQYR ZR NG ZL JBEFG GURA LBH FHER NF
-URYYQBAG QRFREIR ZR NG ZL ORFG ZNEVYLA ZBAEBR"""
+# Example encrypted text (from the image):
+encrypted_text = """
+tybony_inenvoyr = 100
+zl_qvpg = {'xrl1': 'inyhr1', 'xrl2': 'inyhr2', 'xrl3': 'inyhr3'}
 
+qrs cebrff_ahzoref():
+    tybony tybony_inenvoyr
+    ybpny_inenvoyr = 5
+    ahzoref = [1, 2, 3, 4, 5]
 
-key = 0
+    juvyr ybpny_inenvoyr > 0:
+        vs ybpny_inenvoyr % 2 == 0:
+            ahzoref.erzbir(ybpny_inenvoyr)
+        ybpny_inenvoyr -= 1
 
-if __name__ == "__main__": 
-    with open('scripts/question3/code.txt', 'r') as f: 
-        encryted_code = f.read() 
-    print(decrypt(encryted_code, 13 ))
+    erghea ahzoref
 
-    # print(decrypt(encryted_text, 13))
-    # key is 13 
-    # for key in range(1,26): 
-    #     print(f"Trying Encryption Key {key}")
-    #     output = decrypt(encryped_code, key)
-    #     print(f"Output is {output}") 
-    #     print("*"*50)
-# Encrypt the original code
-# encrypted_code = encrypt(original_code, key)
-# print("Encrypted Code:", encrypted_code)
+zl_frg = {1, 2, 3, 4, 5, 5, 4, 3, 2, 1}
+erfhyg = cebprff_ahzoref(ahzoref=zl_frg)
 
-# # Decrypt the encrypted code
-# decrypted_code = decrypt(encrypted_code, key)
-# print("Decrypted Code:", decrypted_code)
+qrs zbqvsl_qvpg():
+    ybpny_inenvoyr = 10
+    zl_qvpg['xrl4'] = ybpny_inenvoyr
+
+zbqvsl_qvpg(5)
+
+qrs hcangr_tybony():
+    tybony tybony_inenvoyr
+    tybony_inenvoyr += 10
+
+sbe v va enatr(5):
+    cevag(v)
+    v += 1
+
+vs zl_frg vf abg Abar naq zl_qvpg['xrl4'] == 10:
+    cevag("Pbaqvgvba zrg!")
+vs 5 abg va zl_qvpg:
+    cevag("5 abg sbeq va gur qvpgvbanel!")
+cevag(tybony_inenvoyr)
+cevag(zl_qvpg)
+cevag(zl_frg)
+"""
+
+key = 13
+decrypted_text = decrypt(encrypted_text, key)
+print(decrypted_text)
