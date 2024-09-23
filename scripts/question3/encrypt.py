@@ -1,20 +1,37 @@
 def decrypt(text, key):
+    # Initialize an empty string to hold the decrypted text
     decrypted_text = ""
+    
+    # Loop through each character in the text
     for char in text:
-        if char.isalpha():  # Check if the character is a letter
+        # Check if the character is a letter (ignores spaces, numbers, and symbols)
+        if char.isalpha():
+            # Get the ASCII code of the character and shift it by the key (Caesar Cipher decryption)
             shifted = ord(char) - key
+            
+            # Handle lowercase letters separately
             if char.islower():
+                # If the shifted value is less than 'a', wrap around by adding 26 (for the alphabet length)
                 if shifted < ord('a'):
                     shifted += 26
+            
+            # Handle uppercase letters separately
             elif char.isupper():
+                # If the shifted value is less than 'A', wrap around by adding 26 (for the alphabet length)
                 if shifted < ord('A'):
                     shifted += 26
+            
+            # Append the decrypted character to the result string
             decrypted_text += chr(shifted)
+        
         else:
-            decrypted_text += char  # Non-alphabet characters remain unchanged
+            # Non-alphabet characters (spaces, punctuation, etc.) are added unchanged
+            decrypted_text += char
+    
+    # Return the fully decrypted text
     return decrypted_text
 
-# Example encrypted text (from the image):
+# Example encrypted text (using ROT13 encryption where each letter is shifted by 13 positions)
 encrypted_text = """
 tybony_inenvoyr = 100
 zl_qvpg = {'xrl1': 'inyhr1', 'xrl2': 'inyhr2', 'xrl3': 'inyhr3'}
@@ -57,6 +74,11 @@ cevag(zl_qvpg)
 cevag(zl_frg)
 """
 
+# Key for decryption (13 for ROT13, which shifts by 13 letters)
 key = 13
+
+# Decrypt the encrypted text using the key
 decrypted_text = decrypt(encrypted_text, key)
+
+# Print the decrypted text to the console
 print(decrypted_text)
