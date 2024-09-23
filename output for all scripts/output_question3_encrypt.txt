@@ -1,39 +1,72 @@
+# Global variable initialized to 100
 global_varaible = 100
+
+# Dictionary with three key-value pairs
 my_dict = {'key1': 'value1', 'key2': 'value2', 'key3': 'value3'}
 
-def proess_numbers():
+# Function to process numbers
+def process_numbers():
+    # Use the global variable 'global_varaible' inside the function
     global global_varaible
+    # Local variable initialized to 5
     local_varaible = 5
+    # List of numbers to process
     numbers = [1, 2, 3, 4, 5]
 
+    # Loop while the local variable is greater than 0
     while local_varaible > 0:
+        # If the local variable is even, remove it from the list
         if local_varaible % 2 == 0:
             numbers.remove(local_varaible)
+        # Decrease the local variable by 1 each time through the loop
         local_varaible -= 1
 
+    # Return the modified list of numbers
     return numbers
 
+# Set with unique values (duplicate values like 5 and 4 are ignored in a set)
 my_set = {1, 2, 3, 4, 5, 5, 4, 3, 2, 1}
-result = process_numbers(numbers=my_set)
 
+# Call the process_numbers function with the set, but this will raise an error
+# because 'process_numbers' does not accept arguments.
+result = process_numbers(numbers=my_set)  # This line will cause an error!
+
+# Function to modify the dictionary by adding a new key-value pair
 def modify_dict():
+    # Local variable initialized to 10
     local_varaible = 10
+    # Add a new key 'key4' to the dictionary and assign it the value of local_variable
     my_dict['key4'] = local_varaible
 
-modify_dict(5)
+# Call the modify_dict function (but incorrectly passing an argument, causing an error)
+modify_dict(5)  # This line will cause an error!
 
-def upnate_global():
+# Function to update the global variable
+def update_global():
+    # Use the global variable 'global_varaible' inside the function
     global global_varaible
+    # Increase the global variable by 10
     global_varaible += 10
 
+# Loop that prints numbers from 0 to 4
 for i in range(5):
     print(i)
-    i += 1
+    # This line is unnecessary since 'i' is controlled by the loop
+    i += 1  # This does nothing because the next iteration overwrites 'i'
 
+# Check if 'my_set' is not None and if 'key4' in the dictionary is equal to 10
 if my_set is not None and my_dict['key4'] == 10:
     print("Condition met!")
+
+# Check if the value 5 is not a key in the dictionary
 if 5 not in my_dict:
-    print("5 not ford in the dictionary!")
+    print("5 not found in the dictionary!")
+
+# Print the value of the global variable
 print(global_varaible)
+
+# Print the modified dictionary
 print(my_dict)
+
+# Print the set
 print(my_set)
