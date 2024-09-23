@@ -5,7 +5,7 @@ global_varaible = 100
 my_dict = {'key1': 'value1', 'key2': 'value2', 'key3': 'value3'}
 
 # Function to process numbers
-def process_numbers():
+def proess_numbers():
     # Use the global variable 'global_varaible' inside the function
     global global_varaible
     # Local variable initialized to 5
@@ -42,7 +42,7 @@ def modify_dict():
 modify_dict(5)  # This line will cause an error!
 
 # Function to update the global variable
-def update_global():
+def upnate_global():
     # Use the global variable 'global_varaible' inside the function
     global global_varaible
     # Increase the global variable by 10
